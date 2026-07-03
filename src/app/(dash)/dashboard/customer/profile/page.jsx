@@ -1,16 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
-
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 import {
   Avatar,
@@ -18,129 +8,105 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-const profileSchema = z.object({
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  image: z.string().url("Enter a valid image URL"),
-});
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import EditProfileModal from "@/components/my/customer/EditProfileModal";
 
 export default function ProfilePage() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
+
+  if (isPending) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   const user = session?.user;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(profileSchema),
-    values: {
-      name: user?.name || "",
-      image: user?.image || "",
-    },
-  });
-
-  const onSubmit = async (data) => {
-    console.log(data);
-
-    // এখানে Better Auth update API call করবে
-    // await authClient.updateUser(data)
-
-    alert("Profile Updated Successfully");
-  };
-
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">
-            My Profile
+    <div className="mx-auto max-w-4xl p-8">
+      <Card className="overflow-hidden rounded-2xl shadow-lg">
+        {/* Cover */}
+        <div className="h-30 bg-linear-to-r from-indigo-600 via-violet-500 to-purple-600" />
+
+        <CardHeader className="-mt-16 flex flex-col items-center">
+          <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
+            <AvatarImage
+              src={user?.image}
+              referrerPolicy="no-referrer"
+            />
+            <AvatarFallback className="text-4xl">
+              {user?.name?.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+
+          <CardTitle className="mt-4 text-3xl">
+            {user?.name}
           </CardTitle>
+
+          <p className="text-muted-foreground">
+            {user?.email}
+          </p>
+
+          <Badge className="mt-3 capitalize">
+            {user?.role}
+          </Badge>
         </CardHeader>
 
-        <CardContent>
-          <div className="flex flex-col items-center gap-4 mb-8">
-            <Avatar className="h-28 w-28">
-              <AvatarImage
-                src={user?.image}
-                referrerPolicy="no-referrer"
-              />
-              <AvatarFallback>
-                {user?.name?.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+        <CardContent className="space-y-8">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="rounded-xl border p-5">
+              <p className="text-sm text-muted-foreground">
+                Full Name
+              </p>
 
-            <h2 className="text-xl font-bold">
-              {user?.name}
-            </h2>
+              <h3 className="mt-2 text-lg font-semibold">
+                {user?.name}
+              </h3>
+            </div>
 
-            <p className="text-muted-foreground">
-              {user?.email}
-            </p>
+            <div className="rounded-xl border p-5">
+              <p className="text-sm text-muted-foreground">
+                Email Address
+              </p>
+
+              <h3 className="mt-2 text-lg font-semibold">
+                {user?.email}
+              </h3>
+            </div>
+
+            <div className="rounded-xl border p-5">
+              <p className="text-sm text-muted-foreground">
+                Role
+              </p>
+
+              <h3 className="mt-2 text-lg font-semibold capitalize">
+                {user?.role}
+              </h3>
+            </div>
+
+            <div className="rounded-xl border p-5">
+              <p className="text-sm text-muted-foreground">
+                Status
+              </p>
+
+              <h3 className="mt-2 text-lg font-semibold text-green-600">
+                Active
+              </h3>
+            </div>
           </div>
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
-          >
-            <div>
-              <label className="text-sm font-medium">
-                Full Name
-              </label>
-
-              <Input
-                className="mt-2"
-                {...register("name")}
-              />
-
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">
-                Email
-              </label>
-
-              <Input
-                className="mt-2"
-                value={user?.email || ""}
-                readOnly
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium">
-                Profile Image URL
-              </label>
-
-              <Input
-                className="mt-2"
-                {...register("image")}
-              />
-
-              {errors.image && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.image.message}
-                </p>
-              )}
-            </div>
-
-            <Button
-              className="w-full"
-              disabled={isSubmitting}
-            >
-              {isSubmitting
-                ? "Saving..."
-                : "Save Changes"}
-            </Button>
-          </form>
+          <div className="flex justify-end">
+            <EditProfileModal user={user} />
+          </div>
         </CardContent>
       </Card>
     </div>
