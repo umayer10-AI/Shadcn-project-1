@@ -48,7 +48,7 @@ export default function ProfilePage() {
             </AvatarFallback>
           </Avatar>
 
-          <CardTitle className="mt-4 text-3xl">
+          <CardTitle className="mt-2 text-3xl">
             {user?.name}
           </CardTitle>
 
