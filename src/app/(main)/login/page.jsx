@@ -125,8 +125,8 @@ export default function LoginPage() {
               disabled={isSubmitting}
             >
               {isSubmitting
-                ? "Creating Account..."
-                : "Create Account"}
+                ? "Login..."
+                : "Login"}
             </Button>
           </form>
 

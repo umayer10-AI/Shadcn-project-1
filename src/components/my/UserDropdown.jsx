@@ -25,6 +25,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 export default function UserDropdown() {
 
@@ -34,6 +35,7 @@ export default function UserDropdown() {
 
     const a = async() => {
         await authClient.signOut()
+        redirect('/')
     }
 
   return (
@@ -51,7 +53,7 @@ export default function UserDropdown() {
 
       <DropdownMenuContent align="end" className="w-56">
   <DropdownMenuItem asChild>
-    <Link href="/dashboard" className="flex items-center gap-2">
+    <Link href={`/dashboard/${user?.role}`} className="flex items-center gap-2">
       <LayoutDashboard className="h-4 w-4" />
       <span>Dashboard</span>
     </Link>
