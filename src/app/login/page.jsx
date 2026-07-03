@@ -154,12 +154,12 @@ export default function LoginPage() {
 
           {/* Footer */}
           <p className="mt-3 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            Create a new account?{" "}
             <Link
-              href="/login"
+              href="/register"
               className="font-semibold text-primary hover:underline"
             >
-              Login
+              register
             </Link>
           </p>
         </CardContent>

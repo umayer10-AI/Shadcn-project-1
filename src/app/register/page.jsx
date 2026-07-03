@@ -10,6 +10,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { authClient } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
 
@@ -18,12 +26,15 @@ const registerSchema = z.object({
   image: z.string().url("Please enter a valid image URL"),
   email: z.string().email("Please enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.enum(["customer", "seller"]),
 });
 
 export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(registerSchema),
@@ -32,6 +43,7 @@ export default function RegisterPage() {
       image: "",
       email: "",
       password: "",
+      role: "customer",
     },
   });
 
@@ -39,11 +51,12 @@ export default function RegisterPage() {
     console.log(v);
 
     const { data, error } = await authClient.signUp.email({
-        name: v.name,
-        email: v.email,
-        password: v.password,
-        image: v.image,
-        callbackURL: "/",
+      name: v.name,
+      email: v.email,
+      password: v.password,
+      image: v.image,
+      role: v.role,
+      callbackURL: "/",
     });
 
     if(data){
@@ -53,26 +66,26 @@ export default function RegisterPage() {
     if(error){
         alert(error.message)
     }
-    
   };
 
   const handleGoogleLogin = async () => {
-    const data = await authClient.signIn.social({
-        provider: "google",
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
     });
   };
 
   return (
-    <div className="flex  items-center justify-center bg-muted/40 px-4 py-10">
+    <div className="flex items-center justify-center bg-muted/40 px-4 py-10">
       <Card className="w-full max-w-md shadow-xl">
-        <CardContent className="p-8">
+        <CardContent className="p-6">
           {/* Header */}
-          <div className="mb-8 text-center">
+          <div className="mb-5 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary">
               <BookOpen className="h-7 w-7 text-primary-foreground" />
             </div>
 
-            <h1 className="text-3xl font-bold">
+            <h1 className="mt-4 text-3xl font-bold">
               Create Account
             </h1>
 
@@ -111,7 +124,7 @@ export default function RegisterPage() {
               </label>
 
               <Input
-                placeholder="https://example.com/profile.jpg"
+                placeholder="https://example.com/avatar.jpg"
                 {...register("image")}
               />
 
@@ -160,6 +173,42 @@ export default function RegisterPage() {
               )}
             </div>
 
+            {/* Role */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Select Role
+              </label>
+
+              <Select
+                defaultValue={watch("role")}
+                onValueChange={(value) =>
+                  setValue("role", value, {
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Role" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="customer">
+                    Customer
+                  </SelectItem>
+
+                  <SelectItem value="seller">
+                    Seller
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+
+              {errors.role && (
+                <p className="text-sm text-red-500">
+                  {errors.role.message}
+                </p>
+              )}
+            </div>
+
             {/* Register Button */}
             <Button
               type="submit"
@@ -174,13 +223,13 @@ export default function RegisterPage() {
 
           {/* Divider */}
           <div className="my-3 flex items-center">
-            <div className="h-px flex-1 bg-border"></div>
+            <div className="h-px flex-1 bg-border" />
 
             <span className="mx-4 text-sm text-muted-foreground">
               OR
             </span>
 
-            <div className="h-px flex-1 bg-border"></div>
+            <div className="h-px flex-1 bg-border" />
           </div>
 
           {/* Google Login */}
