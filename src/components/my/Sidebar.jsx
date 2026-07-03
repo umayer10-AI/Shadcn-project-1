@@ -80,7 +80,7 @@ export default function Sidebar() {
     }
 
   return (
-    <aside className="flex h-screen w-60 flex-col border-r bg-background">
+    <aside className="flex h-screen w-70 flex-col border-r bg-background">
       {/* User Info */}
       <div className="border-b p-6">
         {
@@ -108,7 +108,7 @@ export default function Sidebar() {
 
           </div>
         </div>
-        : <div className="text-center font-bold text-3xl">Seller Panel</div>
+        : <div className="text-center font-bold text-2xl mt-5">Seller Panel</div>
         }
         
       </div>
