@@ -40,8 +40,9 @@ export default function UserDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="cursor-pointer outline-none flex items-center gap-2 border-2 border-black px-2 py-1 rounded-2xl">
-          <Avatar className="h-7 w-7 border border-black">
-            <AvatarImage src={user?.image} alt="User" />
+          <Avatar
+          className="h-7 w-7">
+            <AvatarImage referrerPolicy="no-referrer" src={user?.image} alt="User" />
             <AvatarFallback>{user?.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <h2>{user?.name.split(' ')[0]}</h2>

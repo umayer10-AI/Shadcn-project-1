@@ -49,9 +49,10 @@ export default function LoginPage() {
     
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Google Login");
-    
+  const handleGoogleLogin = async () => {
+    const data = await authClient.signIn.social({
+        provider: "google",
+    });
   };
 
   return (
