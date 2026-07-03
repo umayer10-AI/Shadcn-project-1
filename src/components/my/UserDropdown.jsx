@@ -60,7 +60,7 @@ export default function UserDropdown() {
   </DropdownMenuItem>
 
   <DropdownMenuItem asChild>
-    <Link href="/profile" className="flex items-center gap-2">
+    <Link href={`/dashboard/${user?.role}/profile`} className="flex items-center gap-2">
       <UserIcon className="h-4 w-4" />
       <span>Profile</span>
     </Link>
