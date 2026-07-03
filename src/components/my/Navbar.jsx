@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./UserDropdown";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
   {
@@ -20,7 +21,9 @@ const navItems = [
 export default function Navbar() {
   const pathname = usePathname();
 
-  const isLoggedIn = true;
+  const { data: session } = authClient.useSession()
+    const user = session?.user
+    console.log(user)
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-md">
@@ -54,7 +57,7 @@ export default function Navbar() {
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    : "text-black hover:bg-muted hover:text-foreground"
                 }`}
               >
                 {item.name}
@@ -65,11 +68,11 @@ export default function Navbar() {
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
-          {isLoggedIn ? (
+          {user ? (
             <UserDropdown />
           ) : (
             <>
-              <Button variant="ghost" asChild>
+              <Button variant="secondary" asChild>
                 <Link href="/register">Register</Link>
               </Button>
 
